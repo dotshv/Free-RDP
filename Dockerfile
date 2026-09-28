@@ -123,7 +123,8 @@ exec /opt/noVNC/utils/novnc_proxy \
     --web /opt/noVNC \
     --heartbeat 30
 STARTSCRIPT
-chmod +x /opt/start.sh
+
+RUN chmod +x /opt/start.sh
 
 RUN cat > /opt/noVNC/index.html << 'HTMLPAGE'
 <!DOCTYPE html>
