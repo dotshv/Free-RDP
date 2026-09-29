@@ -45,7 +45,7 @@ sed -i "s/^max_bpp=.*/max_bpp=24/" /etc/xrdp/xrdp.ini
 mkdir -p /var/run/dbus /var/run/xrdp
 rm -f /var/run/dbus/pid /var/run/xrdp/*.pid
 dbus-daemon --system --fork
-echo "RDP Ready | Port: $RDP_PORT | User: $USERNAME | Pass: $PASSWORD"
+echo "RDP Ready sir| Port: $RDP_PORT | User: $USERNAME | Pass: $PASSWORD"
 /usr/sbin/xrdp-sesman
 exec /usr/sbin/xrdp --nodaemon
 EOF
