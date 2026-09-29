@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=en_US.UTF-8
 
 ENV USERNAME=user \
-    PASSWORD=rdp@12345 \
+    PASSWORD=rdp@123456 \
     RDP_PORT=3389
 
 RUN apt-get update && apt-get install -y \
