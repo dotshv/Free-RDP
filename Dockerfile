@@ -12,8 +12,14 @@ RUN apt-get update && apt-get install -y \
     thunar mousepad \
     gtk2-engines-murrine gtk2-engines-pixbuf \
     && locale-gen en_US.UTF-8 \
-    && apt-get remove -y light-locker xscreensaver 2>/dev/null || true \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get update && apt-get install -y ./google-chrome-stable_current_amd64.deb \
+    && rm -f google-chrome-stable_current_amd64.deb \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get remove -y light-locker xscreensaver 2>/dev/null || true
 
 RUN useradd -m -s /bin/bash -G sudo,ssl-cert user \
     && echo "user:rdp@12345" | chpasswd \
@@ -24,6 +30,13 @@ RUN useradd -m -s /bin/bash -G sudo,ssl-cert user \
 RUN git clone --depth 1 https://github.com/B00merang-Project/Windows-10.git /usr/share/themes/Windows-10 \
     && git clone --depth 1 https://github.com/B00merang-Project/Windows-10-Icons.git /usr/share/icons/Windows-10 \
     && rm -rf /usr/share/themes/Windows-10/.git /usr/share/icons/Windows-10/.git
+
+RUN rm -f /etc/xdg/autostart/light-locker.desktop \
+    /etc/xdg/autostart/xscreensaver.desktop \
+    /etc/xdg/autostart/xfce4-power-manager.desktop \
+    /etc/xdg/autostart/xiccd.desktop \
+    /etc/xdg/autostart/xfce-polkit.desktop \
+    2>/dev/null || true
 
 RUN mkdir -p /home/user/.config/xfce4/xfconf/xfce-perchannel-xml
 
@@ -54,6 +67,9 @@ RUN cat > /home/user/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml << 'XEOF
     <property name="theme" type="string" value="Windows-10"/>
     <property name="title_font" type="string" value="Noto Sans Bold 9"/>
     <property name="button_layout" type="string" value="O|HMC"/>
+    <property name="use_compositing" type="bool" value="false"/>
+    <property name="box_move" type="bool" value="true"/>
+    <property name="box_resize" type="bool" value="true"/>
   </property>
 </channel>
 XEOF
@@ -71,9 +87,9 @@ RUN cat > /home/user/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml <<
       <property name="size" type="uint" value="40"/>
       <property name="background-style" type="uint" value="1"/>
       <property name="background-color" type="array">
-        <value type="uint" value="13878"/>
-        <value type="uint" value="16962"/>
-        <value type="uint" value="20046"/>
+        <value type="uint" value="6939"/>
+        <value type="uint" value="8995"/>
+        <value type="uint" value="12336"/>
         <value type="uint" value="65535"/>
       </property>
       <property name="plugin-ids" type="array">
@@ -108,7 +124,6 @@ RUN cat > /home/user/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml <<
     <property name="plugin-6" type="string" value="clock">
       <property name="digital-format" type="string" value="%I:%M %p"/>
       <property name="digital-date-format" type="string" value="%m/%d/%Y"/>
-      <property name="digital-date-font" type="string" value="Noto Sans 8"/>
     </property>
     <property name="plugin-7" type="string" value="showdesktop"/>
   </property>
@@ -122,11 +137,35 @@ RUN cat > /home/user/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml 
     <property name="screen0" type="empty">
       <property name="monitorscreen" type="empty">
         <property name="workspace0" type="empty">
-          <property name="color-style" type="int" value="0"/>
+          <property name="color-style" type="int" value="1"/>
           <property name="rgba1" type="array">
-            <value type="uint" value="10537"/>
-            <value type="uint" value="27756"/>
-            <value type="uint" value="48573"/>
+            <value type="uint" value="0"/>
+            <value type="uint" value="30840"/>
+            <value type="uint" value="55255"/>
+            <value type="uint" value="65535"/>
+          </property>
+          <property name="rgba2" type="array">
+            <value type="uint" value="0"/>
+            <value type="uint" value="15420"/>
+            <value type="uint" value="40092"/>
+            <value type="uint" value="65535"/>
+          </property>
+          <property name="image-style" type="int" value="0"/>
+        </property>
+      </property>
+      <property name="monitor0" type="empty">
+        <property name="workspace0" type="empty">
+          <property name="color-style" type="int" value="1"/>
+          <property name="rgba1" type="array">
+            <value type="uint" value="0"/>
+            <value type="uint" value="30840"/>
+            <value type="uint" value="55255"/>
+            <value type="uint" value="65535"/>
+          </property>
+          <property name="rgba2" type="array">
+            <value type="uint" value="0"/>
+            <value type="uint" value="15420"/>
+            <value type="uint" value="40092"/>
             <value type="uint" value="65535"/>
           </property>
           <property name="image-style" type="int" value="0"/>
@@ -135,30 +174,23 @@ RUN cat > /home/user/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml 
     </property>
   </property>
   <property name="desktop-icons" type="empty">
-    <property name="style" type="int" value="2"/>
-    <property name="file-icons" type="empty">
-      <property name="show-home" type="bool" value="true"/>
-      <property name="show-filesystem" type="bool" value="true"/>
-      <property name="show-trash" type="bool" value="true"/>
-    </property>
+    <property name="style" type="int" value="0"/>
   </property>
 </channel>
 XEOF
 
-RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && apt-get update && apt-get install -y ./google-chrome-stable_current_amd64.deb \
-    && rm -f google-chrome-stable_current_amd64.deb \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN cat > /home/user/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml << 'XEOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="thunar" version="1.0">
+  <property name="misc-exec-shell-scripts-by-default" type="bool" value="true"/>
+</channel>
+XEOF
 
 RUN mkdir -p /home/user/.config \
     && printf '[Default Applications]\nx-scheme-handler/http=google-chrome.desktop\nx-scheme-handler/https=google-chrome.desktop\ntext/html=google-chrome.desktop\napplication/xhtml+xml=google-chrome.desktop\n' > /home/user/.config/mimeapps.list \
     && update-alternatives --set x-www-browser /usr/bin/google-chrome-stable 2>/dev/null || true
 
-RUN mkdir -p /home/user/Desktop \
-    && printf '[Desktop Entry]\nVersion=1.0\nType=Application\nName=Google Chrome\nExec=google-chrome-stable --no-sandbox --disable-gpu\nIcon=google-chrome\nStartupNotify=true\n' > /home/user/Desktop/chrome.desktop \
-    && printf '[Desktop Entry]\nVersion=1.0\nType=Application\nName=Terminal\nExec=xfce4-terminal\nIcon=utilities-terminal\nStartupNotify=true\n' > /home/user/Desktop/terminal.desktop \
-    && printf '[Desktop Entry]\nVersion=1.0\nType=Application\nName=Files\nExec=thunar\nIcon=system-file-manager\nStartupNotify=true\n' > /home/user/Desktop/files.desktop \
-    && chmod +x /home/user/Desktop/*.desktop
+RUN sed -i 's/Exec=google-chrome-stable/Exec=google-chrome-stable --no-sandbox --disable-gpu/' /usr/share/applications/google-chrome.desktop 2>/dev/null || true
 
 RUN chown -R user:user /home/user
 
